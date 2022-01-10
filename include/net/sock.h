@@ -411,7 +411,6 @@ struct sock {
 	u32			sk_pacing_status; /* see enum sk_pacing */
 	long			sk_sndtimeo;
 	struct timer_list	sk_timer;
-	__u32			sk_priority;
 	__u32			sk_mark;
 	u32			sk_pacing_rate; /* bytes per second */
 	u32			sk_max_pacing_rate;
@@ -442,8 +441,14 @@ struct sock {
 				sk_err_soft;
 	u32			sk_ack_backlog;
 	u32			sk_max_ack_backlog;
+	__u32			sk_priority;
+#if IS_ENABLED(CONFIG_CGROUP_NET_PRIO)
+	__u32			sk_cgrp_prioidx;
+#endif
+	spinlock_t		sk_peer_lock;
 	struct pid		*sk_peer_pid;
 	const struct cred	*sk_peer_cred;
+
 	long			sk_rcvtimeo;
 	ktime_t			sk_stamp;
 #if BITS_PER_LONG==32
